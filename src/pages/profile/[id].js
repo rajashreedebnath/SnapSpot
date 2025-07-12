@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Image from 'next/image';
+
 
 export default function PhotographerProfile() {
   const router = useRouter();
@@ -45,10 +47,12 @@ export default function PhotographerProfile() {
     <div className="p-6 max-w-5xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row gap-6">
-        <img
+        <Image
           src={photographer.profilePic}
           alt={photographer.name}
-          className="w-full md:w-1/3 h-auto rounded shadow"
+          width={400}
+          height={300}
+          className="rounded shadow w-full md:w-1/3 h-auto"
         />
 
         <div>
@@ -85,11 +89,13 @@ export default function PhotographerProfile() {
         <h2 className="text-xl font-semibold mb-3">Portfolio</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {photographer.portfolio.map((img, index) => (
-            <img
-              key={index}
+            <Image
               src={img}
               alt={`portfolio-${index}`}
-              className="w-full h-40 object-cover rounded shadow"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 33vw"
+              priority={index === 0}
             />
           ))}
         </div>

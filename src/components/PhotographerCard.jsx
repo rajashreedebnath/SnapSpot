@@ -1,14 +1,18 @@
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 export default function PhotographerCard({ photographer }) {
   const router = useRouter();
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-xl transition-all duration-300 ease-in-out cursor-pointer">
-      <img
+      <Image
         src={photographer.profilePic}
         alt={photographer.name}
-        className="w-full h-48 object-cover rounded mb-3"
+        width={400}
+        height={192}
+        className="w-full object-cover rounded mb-3"
+        style={{ height: "12rem" }}
       />
       <h3 className="text-lg font-semibold">{photographer.name}</h3>
       <p className="text-sm text-gray-600">{photographer.location}</p>

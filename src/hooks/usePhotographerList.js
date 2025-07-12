@@ -53,7 +53,7 @@ export default function usePhotographerList(allPhotographers, filters, search) {
   }, [debouncedSearch, allPhotographers, filters]);
 
   useEffect(() => {
-    setVisibleCount(6);
+    setVisibleCount(4);
   }, [debouncedSearch, filters]);
 
   return { filteredPhotographers, visibleCount, setVisibleCount };
