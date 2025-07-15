@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
 
-
 export default function PhotographerProfile() {
   const router = useRouter();
   const { id } = router.query;
@@ -52,7 +51,7 @@ export default function PhotographerProfile() {
           alt={photographer.name}
           width={400}
           height={300}
-          className="rounded shadow w-full md:w-1/3 h-auto"
+          className="rounded shadow w-full md:w-1/3 h-auto object-cover"
         />
 
         <div>
@@ -63,12 +62,12 @@ export default function PhotographerProfile() {
           <p className="mt-3 text-gray-700">{photographer.bio}</p>
 
           <div className="flex flex-wrap gap-2 mt-4">
-            {photographer.styles.map((style) => (
+            {photographer.styles?.map((style) => (
               <span key={style} className="text-sm bg-blue-100 px-3 py-1 rounded">
                 {style}
               </span>
             ))}
-            {photographer.tags.map((tag) => (
+            {photographer.tags?.map((tag) => (
               <span key={tag} className="text-sm bg-gray-200 px-3 py-1 rounded">
                 #{tag}
               </span>
@@ -88,15 +87,16 @@ export default function PhotographerProfile() {
       <div className="mt-10">
         <h2 className="text-xl font-semibold mb-3">Portfolio</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {photographer.portfolio.map((img, index) => (
-            <Image
-              src={img}
-              alt={`portfolio-${index}`}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 33vw"
-              priority={index === 0}
-            />
+          {photographer.portfolio?.map((img, index) => (
+            <div key={index} className="relative w-full h-48">
+              <Image
+                src={img}
+                alt={`portfolio-${index}`}
+                fill
+                className="object-cover rounded"
+                priority={index === 0}
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -105,7 +105,7 @@ export default function PhotographerProfile() {
       <div className="mt-10">
         <h2 className="text-xl font-semibold mb-3">Reviews</h2>
         <div className="space-y-4">
-          {photographer.reviews.map((review, index) => (
+          {photographer.reviews?.map((review, index) => (
             <div key={index} className="bg-gray-100 p-4 rounded shadow-sm">
               <p className="font-semibold">{review.name} ⭐ {review.rating}</p>
               <p className="text-sm text-gray-600">{review.date}</p>
@@ -126,32 +126,27 @@ export default function PhotographerProfile() {
                   type="text"
                   placeholder="Your name"
                   className="w-full mb-2 p-2 border rounded"
-                  disabled={submitted}
                 />
                 <input
                   type="email"
                   placeholder="Your email"
                   className="w-full mb-2 p-2 border rounded"
-                  disabled={submitted}
                 />
                 <textarea
                   placeholder="Message"
                   className="w-full mb-2 p-2 border rounded h-24"
-                  disabled={submitted}
                 ></textarea>
 
                 <div className="flex justify-end gap-2 mt-3">
                   <button
                     onClick={() => setShowInquiry(false)}
                     className="px-4 py-2 text-gray-700 border rounded"
-                    disabled={submitted}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSendInquiry}
                     className="px-4 py-2 btn-primary"
-                    disabled={submitted}
                   >
                     Send
                   </button>
