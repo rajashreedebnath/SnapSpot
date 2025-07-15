@@ -1,51 +1,25 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-
+import { useState } from 'react';
 import SearchBar from '@/components/SearchBar';
 import SortDropdown from '@/components/SortDropdown';
 import FiltersSidebar from '@/components/FiltersSidebar';
 import SmartSuggestion from '@/components/SmartSuggestion';
 import PhotographerList from '@/components/PhotographerList';
-
-import usePhotographerList from '@/hooks/usePhotographerList';
+import { usePhotographer } from '@/context/PhotographerContext';
 
 export default function HomePage() {
-  const [allPhotographers, setAllPhotographers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-
-  const [filters, setFilters] = useState({
-    minPrice: '',
-    maxPrice: '',
-    rating: 0,
-    styles: [],
-    sortBy: '',
-    city: '',
-  });
-
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-  useEffect(() => {
-    const fetchPhotographers = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get(`${API_URL}/photographers`);
-        setAllPhotographers(res.data);
-      } catch (err) {
-        console.error('Error fetching photographers:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPhotographers();
-  }, []);
-
-  const { filteredPhotographers, visibleCount, setVisibleCount } = usePhotographerList(
+  const {
     allPhotographers,
+    loading,
     filters,
-    search
-  );
+    setFilters,
+    search,
+    setSearch,
+    filteredPhotographers,
+    visibleCount,
+    setVisibleCount
+  } = usePhotographer();
+
+  const [showFilters, setShowFilters] = useState(false);
 
   return (
     <div className="p-4 bg-gradient-to-r from-indigo-50 to-indigo-100 min-h-screen">
@@ -88,32 +62,20 @@ export default function HomePage() {
       </div>
 
       {showFilters && (
-        <div className={`fixed inset-0 z-50 transition-opacity duration-300 ${showFilters ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-          <div className={`transform transition-transform duration-300 ease-in-out bg-blue-100 h-full w-4/5 p-4 overflow-y-auto ${showFilters ? 'translate-x-0' : '-translate-x-full'} fixed top-0 left-0 z-50`}>
+        <div className={`fixed inset-0 z-50`}>
+          <div className="transform bg-blue-100 h-full w-4/5 p-4 overflow-y-auto fixed top-0 left-0 z-50">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold">Filters & Sort</h2>
               <button onClick={() => setShowFilters(false)} className="text-xl font-bold text-gray-600 hover:text-black">×</button>
             </div>
-            <FiltersSidebar
-              filters={filters}
-              setFilters={(newFilters) => {
-                setFilters(newFilters);
-                setShowFilters(false);
-              }}
-            />
-
+            <FiltersSidebar filters={filters} setFilters={setFilters} />
             <SortDropdown
               sortBy={filters.sortBy}
-              setSortBy={(val) => {
-                setFilters((prev) => ({ ...prev, sortBy: val }));
-                setShowFilters(false);
-              }}
+              setSortBy={(val) => setFilters((prev) => ({ ...prev, sortBy: val }))}
             />
-
           </div>
           <div onClick={() => setShowFilters(false)} className="absolute inset-0 bg-black bg-opacity-50"></div>
         </div>
-
       )}
     </div>
   );

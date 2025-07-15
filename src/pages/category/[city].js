@@ -1,64 +1,35 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-
 import SearchBar from '@/components/SearchBar';
 import SortDropdown from '@/components/SortDropdown';
 import FiltersSidebar from '@/components/FiltersSidebar';
 import SmartSuggestion from '@/components/SmartSuggestion';
 import PhotographerList from '@/components/PhotographerList';
-
-import usePhotographerList from '@/hooks/usePhotographerList';
+import { usePhotographer } from '@/context/PhotographerContext';
 
 export default function CategoryPage() {
   const router = useRouter();
   const { city } = router.query;
 
-  const [allPhotographers, setAllPhotographers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const {
+    allPhotographers,
+    loading,
+    filters,
+    setFilters,
+    search,
+    setSearch,
+    filteredPhotographers,
+    visibleCount,
+    setVisibleCount
+  } = usePhotographer();
+
   const [showFilters, setShowFilters] = useState(false);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
-  const [filters, setFilters] = useState({
-    minPrice: '',
-    maxPrice: '',
-    rating: 0,
-    styles: [],
-    sortBy: '',
-    city: city || '',
-  });
-
-  useEffect(() => {
-    if (!city) return;
-
-    const fetchPhotographers = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get(`${API_URL}/photographers`);
-      } catch (err) {
-        console.error('Error fetching photographers:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPhotographers();
-  }, [city]);
-
-  // Update city in filters when router.city changes
   useEffect(() => {
     if (city) {
       setFilters((prev) => ({ ...prev, city }));
     }
   }, [city]);
-
-  const { filteredPhotographers, visibleCount, setVisibleCount } = usePhotographerList(
-    allPhotographers,
-    filters,
-    search
-  );
 
   return (
     <div className="p-4">
